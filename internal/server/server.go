@@ -5,8 +5,12 @@ import (
 
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	fiber "github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/csrf"
+	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 
 	v1 "golang-starter/internal/server/handlers/v1"
 	"golang-starter/pkg/config"
@@ -27,8 +31,12 @@ func Run() error {
 func route() *fiber.App {
 	app := fiber.New(fiber.Config{})
 
-	app.Use(logger.New(logger.Config{}))
-	app.Use(cors.New(cors.Config{}))
+	app.Use(logger.New())
+	app.Use(cors.New())
+	app.Use(recover.New())
+	app.Use(favicon.New())
+	app.Use(csrf.New())
+	app.Use(compress.New())
 
 	public := app.Group("/")
 	{
