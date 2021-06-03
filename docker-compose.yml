@@ -1,0 +1,35 @@
+version: '3.1'
+
+services: 
+  api:
+    container_name: api
+    build: .
+    ports: 
+      - "8000:8000"
+    volumes: 
+      - .:/workdir
+
+    command: go run cmd/app/main.go -config configs/example.json 
+    
+    depends_on: 
+      - db
+
+  db:
+    container_name: db
+    image: postgres:12 
+    restart: always
+    environment: 
+      POSTGRES_PASSWORD: 1234
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  nginx:
+    container_name: nginx
+    build: nginx
+    depends_on: 
+      - api
+    ports: 
+      - "8080:8080"
+      
+volumes: 
+  postgres-data:
